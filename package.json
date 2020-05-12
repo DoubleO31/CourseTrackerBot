@@ -1,0 +1,23 @@
+{
+  "name": "course_seat_tracker_bot",
+  "version": "1.0.0",
+  "description": "A discord bot to track course seat availability",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DoubleO",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.1",
+    "discord.js": "^11.4.2",
+    "express": "^4.17.1",
+    "jsdom": "^14.0.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "discordbot"
+  ]
+}
