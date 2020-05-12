@@ -6,69 +6,77 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const _ = require("lodash");
 const config = require("config");
+const Discord = require("./discord");
 const UBC = config.get("UBC");
 const discordConfig = config.get("Discord");
 let discordClient;
-let previousValue;
 let runningTime = 0;
+let courseMap = new Map();
+const delay = 10;
 
 async function checkValue() {
-  const dom = await JSDOM.fromURL(UBC.url);
-  const courseTitle = dom.window.document.querySelector(UBC.courseTitleSelector)
-    .textContent;
-  const remainSeats = dom.window.document.querySelector(UBC.remainSeatsSelector)
-    .textContent;
   const JSON = {
-    Classes: [
-      {
+    Classes: [],
+  };
+  await Promise.all(
+    UBC.url.map(async (url) => {
+      const dom = await JSDOM.fromURL(url);
+      const courseTitle = dom.window.document.querySelector(
+        UBC.courseTitleSelector
+      ).textContent;
+      const remainSeats = dom.window.document.querySelector(
+        UBC.remainSeatsSelector
+      ).textContent;
+      const info = {
         Title: courseTitle,
         Seats: remainSeats,
-      },
-    ],
-  };
+      };
+      JSON.Classes.push(info);
+      courseMap.set(info.Title, info.Seats);
+    })
+  );
+
   return JSON;
 }
 
-function initialize() {
+async function initialize() {
   app.listen(port, hostname, () =>
     console.log(`Server running at http://${hostname}:${port}/`)
   );
-
-  checkValue().then((newValue) => {
-    previousValue = newValue;
-    app.get("/", (req, res) => res.send(newValue));
-    let courses = [];
-    newValue.Classes.forEach((course) => {
-      courses.push(course.Title);
-    });
-    discordClient = new Discord();
-    discordClient.clientLogin();
-    discordClient.trackingSetup(discordConfig.user, courses);
+  courseJSON = await checkValue();
+  app.get("/", (req, res) => res.send(courseJSON));
+  let courses = [];
+  courseJSON.Classes.forEach((course) => {
+    courses.push(course.Title);
   });
+  discordClient = new Discord();
+  discordClient.clientLogin();
+  discordClient.trackingSetup(discordConfig.user, courses);
 }
 
 function tracking() {
-  setInterval(function () {
-    checkValue().then((newValue) => {
-      if (_.isEqual(previousValue, newValue)) {
-        runningTime += 10;
-        if (runningTime % 60 === 0) {
-          discordClient.notify(
-            discordConfig.user,
-            `Tracking for ${runningTime / 60} minutes, No Availability`
-          );
-        }
-      } else {
-        previousValue = newValue;
-        app.get("/", (req, res) => res.send(newValue));
-        let seats = [];
-        newValue.Classes.forEach((course) => {
-          seats.push(course.Seats);
-        });
-        discordClient.notify(discordConfig.user, seats);
+  setInterval(async function () {
+    let diff = [];
+    const courseJSON = await checkValue();
+    _.forEach(courseJSON.Classes, (course) => {
+      if (!_.isEqual(courseMap.get(course.Title), course.Seats)) {
+        courseMap.set(course.Title, course.Seats);
+        diff.push(course);
       }
     });
-  }, 10000);
+    if (_.isEmpty(diff)) {
+      runningTime += delay;
+      if (runningTime % 60 === 0) {
+        discordClient.notify(
+          discordConfig.user,
+          `Tracking for ${runningTime / 60} minutes, No Availability`
+        );
+      }
+    } else {
+      app.get("/", (req, res) => res.send(courseJSON));
+      discordClient.notify(discordConfig.user, diff);
+    }
+  }, delay * 1000);
 }
 
 initialize();

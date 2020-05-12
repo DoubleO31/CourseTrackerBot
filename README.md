@@ -3,8 +3,7 @@ Reworking a discord bot for tracking UBC course seat availability and notify the
 
 **TODO list**:
 - [X] Create a structural template for future functions
-- [ ] More config options
-- [ ] Track more than one course
+- [X] Track more than one course
 - [ ] Track for multiple users
 - [ ] Able to add tracking directly on discord
 - [ ] A proper display website

@@ -30,7 +30,7 @@ class Discord {
   }
 
   notify(userID, seat) {
-    NOTIFY_CHANNEL.send(`<@${userID}> ${seat}`);
+    NOTIFY_CHANNEL.send(`<@${userID}> ${JSON.stringify(seat)}`);
   }
 }
 
