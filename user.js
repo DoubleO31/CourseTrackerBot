@@ -10,10 +10,21 @@ class User {
     this.userID = userID;
     this.runningTime = 0;
     this.courseMap = new Map();
+    this.intervalID;
   }
 
   getUserID() {
     return this.userID;
+  }
+
+  stopInterval() {
+    clearInterval(this.intervalID);
+  }
+
+  updateURLs(url) {
+    if (!_.includes(this.urls, url)) {
+      this.urls.push(url);
+    }
   }
 
   async checkValue() {
@@ -41,9 +52,9 @@ class User {
     return JSON;
   }
 
-  tracking(app, discordClient, delay) {
+  tracking(channel, delay) {
     const self = this;
-    setInterval(async function () {
+    this.intervalID = setInterval(async function () {
       let diff = [];
       const courseJSON = await self.checkValue();
       _.forEach(courseJSON.Classes, (course) => {
@@ -55,17 +66,24 @@ class User {
       if (_.isEmpty(diff)) {
         self.runningTime += delay;
         if (self.runningTime % 60 === 0) {
-          discordClient.notify(
+          self.notify(
+            channel,
             self.userID,
-            `Tracking for ${self.runningTime / 60} minutes, No Availability`
+            `Tracking for ${
+              self.runningTime / 60
+            } minutes, No Availability. ${JSON.stringify(courseJSON)}`
           );
         }
       } else {
         //TODO
-        app.get("/", (req, res) => res.send(courseJSON));
-        discordClient.notify(self.userID, diff);
+        //app.get("/", (req, res) => res.send(courseJSON));
+        self.notify(channel, self.userID, diff);
       }
     }, delay * 1000);
+  }
+
+  notify(channel, userID, seat) {
+    channel.send(`<@${userID}> ${JSON.stringify(seat)}`);
   }
 }
 
