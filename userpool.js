@@ -1,5 +1,4 @@
 const User = require("./user");
-
 class UserPool {
   constructor() {
     this.userMap = new Map();

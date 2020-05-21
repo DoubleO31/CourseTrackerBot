@@ -1,13 +1,10 @@
 {
-    "UBC": {
-      "url": "https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=PSYC&course=315&section=98A",
-      "courseTitleSelector": "body > div.container > div.content.expand > h4",
-      "remainSeatsSelector": "body > div.container > div.content.expand > table.\\'table > tbody > tr:nth-child(1)"
-    },
-    "Discord": {
-      "client": "",
-      "channel": "",
-      "user": ""
-    }
+  "UBC": {
+    "courseTitleSelector": "body > div.container > div.content.expand > h4",
+    "remainSeatsSelector": "body > div.container > div.content.expand > table.\\'table > tbody > tr:nth-child(1)"
+  },
+  "Discord": {
+    "client": "",
+    "channel": ""
   }
-  
+}

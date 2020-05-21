@@ -76,7 +76,6 @@ class User {
         }
       } else {
         //TODO
-        //app.get("/", (req, res) => res.send(courseJSON));
         self.notify(channel, self.userID, diff);
       }
     }, delay * 1000);
