@@ -6,7 +6,6 @@ Reworking a discord bot for tracking UBC course seat availability and notify the
 - [X] Track more than one course
 - [X] Track for multiple users
 - [X] Able to add tracking directly on discord
-- [ ] A proper display website
 
 ## Installation
 
@@ -20,3 +19,5 @@ npm start
 ```
 
 ![Bot](https://github.com/DoubleO31/CourseTrackerBot/blob/master/example/Bot_example.jpg)
+
+Basic function is done. Will work on it again if needed. Moving on to a new project. 
