@@ -13,7 +13,7 @@
     "config": "^3.3.1",
     "discord.js": "^11.4.2",
     "jsdom": "^14.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {},
